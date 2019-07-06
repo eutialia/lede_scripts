@@ -3,11 +3,12 @@
 
 NAME=shadowsocks
 CURRENT_SERVER=$(uci get shadowsocks.@transparent_proxy[0].main_server)
+LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
 is_timeout() {
   pidof ss-redir >/dev/null || return 1
-  if [ ! "$(wget --spider --quiet --timeout=2 --tries=1 https://www.google.com/)" ]; then
-    if [ ! "$(wget --spider --quiet --timeout=2 --tries=1 https://www.baidu.com/)" ]; then
+  if [ "$(curl -Is -K HEAD https://www.google.com/ | head -n 1 | awk '{print $2}')" != 200 ]; then
+    if [ "$(curl -Is -K HEAD https://www.baidu.com/ | head -n 1 | awk '{print $2}')" = 200 ]; then
       return 0
     fi
   fi
@@ -21,5 +22,6 @@ if is_timeout; then
     uci add_list $NAME.@transparent_proxy[0].main_server="$NEXT_SERVER"
     uci commit $NAME
     /etc/init.d/$NAME restart
+    echo "[$LOGTIME] FAILOVER DETECTED AND RECOVERED."
   fi
 fi

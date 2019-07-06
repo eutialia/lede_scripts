@@ -5,6 +5,7 @@ IMS_IP=$(uci get shadowsocks.cfg054a8f.server)
 IMS_HOST=$(uci get shadowsocks.cfg054a8f.host)
 HKBN_IP=$(uci get shadowsocks.cfg074a8f.server)
 HKBN_HOST=$(uci get shadowsocks.cfg074a8f.host)
+LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
 is_ip_changed() {
   new_ip_ims=$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')
@@ -21,4 +22,5 @@ if is_ip_changed; then
   uci set shadowsocks.cfg074a8f.server="$new_ip_hkbn"
   uci commit shadowsocks
   /etc/inid.d/shadowsocks restart
+  echo "[$LOGTIME] SERVER IP CHANGED."
 fi
