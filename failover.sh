@@ -15,7 +15,7 @@ is_timeout() {
   return 1
 }
 
-if is_timeout; then
+while is_timeout; do
   NEXT_SERVER=$(uci -n export $NAME | awk '$2=/servers/{print substr($3,2,9)}' | sed "/""$CURRENT_SERVER""/d")
   if [ -n "$NEXT_SERVER" ]; then
     uci delete $NAME.@transparent_proxy[0].main_server
@@ -24,4 +24,4 @@ if is_timeout; then
     /etc/init.d/$NAME restart
     echo "[$LOGTIME] FAILOVER DETECTED AND RECOVERED."
   fi
-fi
+done
