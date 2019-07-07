@@ -8,6 +8,7 @@ HKBN_HOST=$(uci get shadowsocks.cfg074a8f.host)
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
 is_ip_changed() {
+  pidof ss-redir >/dev/null || return 1
   new_ip_ims=$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')
   new_ip_hkbn=$(nslookup "$HKBN_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')
   if [ "$IMS_IP" = "$new_ip_ims" ] && [ "$HKBN_IP" = "$new_ip_hkbn" ]; then
