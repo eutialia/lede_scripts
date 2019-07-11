@@ -7,6 +7,8 @@ HKBN_IP=$(uci get shadowsocks.cfg074a8f.server)
 HKBN_HOST=$(uci get shadowsocks.cfg074a8f.host)
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
+set -euo
+
 is_ip_changed() {
   pidof ss-redir >/dev/null || return 1
   new_ip_ims=$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')

@@ -5,6 +5,8 @@ NAME=shadowsocks
 CURRENT_SERVER=$(uci get shadowsocks.@transparent_proxy[0].main_server)
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
+set -euo
+
 is_timeout() {
   pidof ss-redir >/dev/null || return 1
   if [ "$(curl -Is -K HEAD https://www.google.com/ | head -n 1 | awk '{print $2}')" != 200 ]; then

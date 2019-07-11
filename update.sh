@@ -1,17 +1,14 @@
 #!/bin/sh
 #0 5 * * 1 /root/crontask/update.sh >/dev/null 2>&1
 
-LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
-
-set -e -o pipefail
+set -euo
  
-wget -O- 'http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest' | \
-    awk -F\| '/CN\|ipv4/ { printf("%s/%d\n", $4, 32-log($5)/log(2)) }' > \
-    /tmp/chinadns_chnroute.txt
+wget -P /tmp/ --quiet https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf
+sed -i "s|^\(server.*\)/[^/]*$|\1/119.29.29.29|" /tmp/accelerated-domains.china.conf
+sed -i /hicloud.com/d /tmp/accelerated-domains.china.conf
+sed -i /dbankcdn.com/d /tmp/accelerated-domains.china.conf
+mv -f /tmp/accelerated-domains.china.conf /etc/dnsmasq.d
  
-mv -f /tmp/chinadns_chnroute.txt /etc/
- 
-if pidof ss-redir>/dev/null; then
-    /etc/init.d/shadowsocks restart
-    echo "["$LOGTIME"] CHN IP LIST UPDATED."
+if pidof dnsmasq>/dev/null; then
+    /etc/init.d/dnsmasq restart
 fi
