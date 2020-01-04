@@ -22,7 +22,6 @@ while is_timeout; do
   if [ -n "$NEXT_SERVER" ]; then
     uci delete $NAME.@transparent_proxy[0].main_server
     uci add_list $NAME.@transparent_proxy[0].main_server="$NEXT_SERVER"
-    uci add_list $NAME.@transparent_proxy[0].main_server="$NEXT_SERVER"
     uci commit $NAME
     /etc/init.d/$NAME restart
     echo "[$LOGTIME] FAILOVER DETECTED AND RECOVERED."

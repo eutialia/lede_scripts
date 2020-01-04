@@ -11,8 +11,8 @@ set -euo
 
 is_ip_changed() {
   pidof ss-redir >/dev/null || return 1
-  new_ip_ims=$( [ -z "$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] )  && "$IMS_IP"
-  new_ip_hkbn=$( [ -z "$(nslookup "$HKBN_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] ) && "$HKBN_IP"
+  new_ip_ims=$( [ -z "$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] )  && new_ip_ims="$IMS_IP"
+  new_ip_hkbn=$( [ -z "$(nslookup "$HKBN_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] ) && new_ip_hkbn="$HKBN_IP"
   if [ "$IMS_IP" = "$new_ip_ims" ] && [ "$HKBN_IP" = "$new_ip_hkbn" ]; then
     return 1
   else
@@ -24,6 +24,6 @@ if is_ip_changed; then
   uci set shadowsocks.cfg054a8f.server="$new_ip_ims"
   uci set shadowsocks.cfg074a8f.server="$new_ip_hkbn"
   uci commit shadowsocks
-  /etc/inid.d/shadowsocks restart
+  /etc/init.d/shadowsocks restart
   echo "[$LOGTIME] SERVER IP CHANGED."
 fi
