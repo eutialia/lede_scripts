@@ -2,7 +2,7 @@
 #* * * * * /root/crontask/switch.sh >/dev/null 2>&1
 
 NAME=shadowsocks
-CURRENT_SERVER=$(uci get shadowsocks.@transparent_proxy[0].main_server)
+CURRENT_SERVER=$(uci get shadowsocks.@transparent_proxy[0].main_server | awk '{print $1}')
 LOGTIME=$(date "+%Y-%m-%d %H:%M:%S")
 
 set -euo
@@ -21,6 +21,7 @@ while is_timeout; do
   NEXT_SERVER=$(uci -n export $NAME | awk '$2=/servers/{print substr($3,2,9)}' | sed "/""$CURRENT_SERVER""/d")
   if [ -n "$NEXT_SERVER" ]; then
     uci delete $NAME.@transparent_proxy[0].main_server
+    uci add_list $NAME.@transparent_proxy[0].main_server="$NEXT_SERVER"
     uci add_list $NAME.@transparent_proxy[0].main_server="$NEXT_SERVER"
     uci commit $NAME
     /etc/init.d/$NAME restart

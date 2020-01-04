@@ -11,8 +11,8 @@ set -euo
 
 is_ip_changed() {
   pidof ss-redir >/dev/null || return 1
-  new_ip_ims=$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')
-  new_ip_hkbn=$(nslookup "$HKBN_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')
+  new_ip_ims=$( [ -z "$(nslookup "$IMS_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] )  && "$IMS_IP"
+  new_ip_hkbn=$( [ -z "$(nslookup "$HKBN_HOST" 119.29.29.29 | awk '/Address 1:/{print $3}')" ] ) && "$HKBN_IP"
   if [ "$IMS_IP" = "$new_ip_ims" ] && [ "$HKBN_IP" = "$new_ip_hkbn" ]; then
     return 1
   else
