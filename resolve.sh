@@ -1,5 +1,6 @@
 #!/bin/sh
 #*/5 * * * * /root/crontask/resolve.sh >/dev/null 2>&1
+#MC is cfg084a8f
 
 IMS_IP=$(uci get shadowsocks.cfg054a8f.server)
 IMS_HOST=$(uci get shadowsocks.cfg054a8f.host)
